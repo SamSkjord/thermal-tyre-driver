@@ -43,6 +43,11 @@ pip install adafruit-blinka
 ### Installation
 
 ```bash
+# Install from PyPI (recommended)
+pip install thermal-tyre-driver
+
+# --- or --- #
+
 # Clone the repository
 git clone https://github.com/samskjord/thermal-tyre-driver.git
 cd thermal-tyre-driver
@@ -188,7 +193,7 @@ class TyreSection:
 ### SensorConfig Parameters
 
 ```python
-from tyre_thermal_driver import SensorConfig
+from thermal_tyre_driver import SensorConfig
 
 config = SensorConfig(
     # Sensor specifications
@@ -231,26 +236,29 @@ sensor = TyreThermalSensor("CUSTOM", config=config)
 ```python
 import busio
 import board
-from tyre_thermal_driver import TyreThermalSensor
+from thermal_tyre_driver import SensorConfig, TyreThermalSensor
 
 # Share I2C bus for efficiency
 i2c_bus = busio.I2C(board.SCL, board.SDA)
+config = SensorConfig(include_raw_frame=False)
 
 # Create sensors for all four tyres
 sensors = {
-    "FL": TyreThermalSensor("FL", mux_address=0x70, mux_channel=0, i2c_bus=i2c_bus),
-    "FR": TyreThermalSensor("FR", mux_address=0x70, mux_channel=1, i2c_bus=i2c_bus),
-    "RL": TyreThermalSensor("RL", mux_address=0x70, mux_channel=2, i2c_bus=i2c_bus),
-    "RR": TyreThermalSensor("RR", mux_address=0x70, mux_channel=3, i2c_bus=i2c_bus)
+    "FL": TyreThermalSensor("FL", config=config, mux_address=0x70, mux_channel=0, i2c_bus=i2c_bus),
+    "FR": TyreThermalSensor("FR", config=config, mux_address=0x70, mux_channel=1, i2c_bus=i2c_bus),
+    "RL": TyreThermalSensor("RL", config=config, mux_address=0x70, mux_channel=2, i2c_bus=i2c_bus),
+    "RR": TyreThermalSensor("RR", config=config, mux_address=0x70, mux_channel=3, i2c_bus=i2c_bus)
 }
 
 # Read all tyres
 for position, sensor in sensors.items():
     data = sensor.read()
-    print(f"{position}: L={data.analysis.left.avg:.1f}°C "
-          f"C={data.analysis.centre.avg:.1f}°C "
-          f"R={data.analysis.right.avg:.1f}°C "
-          f"[{data.detection.confidence:.0%}]")
+    print(
+        f"{position}: L={data.analysis.left.avg:.1f}°C "
+        f"C={data.analysis.centre.avg:.1f}°C "
+        f"R={data.analysis.right.avg:.1f}°C "
+        f"[{data.detection.confidence:.0%}]"
+    )
 ```
 
 ### Data Logging Example
