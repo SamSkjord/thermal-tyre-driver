@@ -4,17 +4,26 @@ Thermal Tyre Sensor Driver
 Provides a clean API for thermal tyre analysis with I2C multiplexer support
 """
 
-import time
 import board
 import busio
 import adafruit_mlx90640
 import numpy as np
 from scipy import ndimage
 from collections import deque
-from typing import Tuple, Dict, List, Optional, NamedTuple
+from typing import Tuple, Dict, List, Optional
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 import json
+
+__all__ = [
+    "SensorConfig",
+    "TyreThermalSensor",
+    "TyreThermalData",
+    "TyreAnalysis",
+    "TyreSection",
+    "DetectionInfo",
+    "I2CMux",
+]
 
 
 # ---- Data Structures ----
@@ -396,8 +405,8 @@ class TyreThermalSensor:
         if cache_key in self._mad_cache:
             return self._mad_cache[cache_key]
 
-        median = np.median(data)
-        mad = np.median(np.abs(data - median))
+        median = float(np.median(data))
+        mad = float(np.median(np.abs(data - median)))
 
         if len(self._mad_cache) > 100:
             self._mad_cache.clear()
@@ -639,16 +648,16 @@ class TyreThermalSensor:
         # Create detection info
         detection = DetectionInfo(
             method=method,
-            span_start=left,
-            span_end=right,
-            width=right - left,
-            confidence=confidence,
-            inverted=inverted,
+            span_start=int(left),
+            span_end=int(right),
+            width=int(right - left),
+            confidence=float(confidence),
+            inverted=bool(inverted),
             clipped=clipped,
-            mad_global=mad_global,
-            median_temp=median_temp,
-            centre_temp=centre_temp,
-            threshold_delta=delta,
+            mad_global=float(mad_global),
+            median_temp=float(median_temp),
+            centre_temp=float(centre_temp),
+            threshold_delta=float(delta),
         )
 
         return left, right, detection, smoothed_profile
@@ -764,77 +773,3 @@ class TyreThermalSensor:
         self.persistence_buffer.clear()
         self.confidence_history.clear()
         self._mad_cache.clear()
-
-
-# ---- Example Usage ----
-if __name__ == "__main__":
-    """Example usage of the driver"""
-
-    # Example 1: Single sensor
-    print("Example 1: Single sensor")
-    sensor = TyreThermalSensor(sensor_id="FRONT_LEFT")
-
-    for i in range(5):
-        try:
-            data = sensor.read()
-            print(f"\nFrame {data.frame_number}:")
-            print(f"  Timestamp: {data.timestamp}")
-            print(f"  Detection: {data.detection.span_start}-{data.detection.span_end}")
-            print(f"  Confidence: {data.detection.confidence:.0%}")
-            print(f"  Left: {data.analysis.left.avg:.1f}°C")
-            print(f"  Centre: {data.analysis.centre.avg:.1f}°C")
-            print(f"  Right: {data.analysis.right.avg:.1f}°C")
-            if data.warnings:
-                print(f"  Warnings: {', '.join(data.warnings)}")
-            time.sleep(0.5)
-        except Exception as e:
-            print(f"Error: {e}")
-            break
-
-    print("\n" + "=" * 70)
-
-    # Example 2: Multiple sensors with I2C mux
-    print("Example 2: Multiple sensors with I2C mux")
-
-    # Shared I2C bus
-    i2c_bus = busio.I2C(board.SCL, board.SDA)
-
-    # Create sensors for all four tyres
-    sensors = {
-        "FRONT_LEFT": TyreThermalSensor(
-            sensor_id="FRONT_LEFT", mux_address=0x70, mux_channel=0, i2c_bus=i2c_bus
-        ),
-        "FRONT_RIGHT": TyreThermalSensor(
-            sensor_id="FRONT_RIGHT", mux_address=0x70, mux_channel=1, i2c_bus=i2c_bus
-        ),
-        "REAR_LEFT": TyreThermalSensor(
-            sensor_id="REAR_LEFT", mux_address=0x70, mux_channel=2, i2c_bus=i2c_bus
-        ),
-        "REAR_RIGHT": TyreThermalSensor(
-            sensor_id="REAR_RIGHT", mux_address=0x70, mux_channel=3, i2c_bus=i2c_bus
-        ),
-    }
-
-    # Read from all sensors
-    for position, sensor in sensors.items():
-        try:
-            data = sensor.read()
-            print(f"\n{position}:")
-            print(
-                f"  Temps: L={data.analysis.left.avg:.1f}°C "
-                f"C={data.analysis.centre.avg:.1f}°C "
-                f"R={data.analysis.right.avg:.1f}°C"
-            )
-            print(f"  Confidence: {data.detection.confidence:.0%}")
-        except Exception as e:
-            print(f"  Error: {e}")
-
-    print("\n" + "=" * 70)
-
-    # Example 3: JSON output
-    print("Example 3: JSON output")
-    sensor = TyreThermalSensor(
-        sensor_id="TEST", config=SensorConfig(include_raw_frame=False)
-    )
-    data = sensor.read()
-    print(data.to_json()[:500] + "...")  # Print first 500 chars

@@ -45,7 +45,7 @@ pip install adafruit-blinka
 ```bash
 # Clone the repository
 git clone https://github.com/samskjord/thermal-tyre-driver.git
-cd thermal-tyre-sensor
+cd thermal-tyre-driver
 
 # Install dependencies
 pip install -r requirements.txt
@@ -58,10 +58,13 @@ sudo raspi-config
 ### Basic Usage
 
 ```python
-from tyre_thermal_driver import TyreThermalSensor
+from thermal_tyre_driver import SensorConfig, TyreThermalSensor
+
+# Configure the sensor
+config = SensorConfig(include_raw_frame=False, refresh_rate=4)
 
 # Create sensor instance
-sensor = TyreThermalSensor(sensor_id="FRONT_LEFT")
+sensor = TyreThermalSensor(sensor_id="FRONT_LEFT", config=config)
 
 # Read temperature data
 data = sensor.read()
@@ -71,6 +74,18 @@ print(f"Left: {data.analysis.left.avg:.1f}°C")
 print(f"Centre: {data.analysis.centre.avg:.1f}°C")
 print(f"Right: {data.analysis.right.avg:.1f}°C")
 print(f"Confidence: {data.detection.confidence:.0%}")
+```
+
+## 🧪 Examples
+
+- `examples/basic_usage.py` – single-sensor read with explicit configuration and JSON output.
+- `examples/multiplexed_usage.py` – shared I2C bus with a TCA9548A multiplexer reading all four tyre positions.
+
+Run an example with:
+
+```bash
+python3 examples/basic_usage.py
+python3 examples/multiplexed_usage.py
 ```
 
 ## 📖 API Documentation
