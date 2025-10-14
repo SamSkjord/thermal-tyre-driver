@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi-red)](https://www.raspberrypi.org/)
-[![AI Slop](https://img.shields.io/badge/Claude%20-Opus%204.1-beige)
+[![AI Slop]](https://img.shields.io/badge/Claude%20-Opus%204.1-beige)
 
 A robust Python driver for thermal tyre temperature monitoring using MLX90640 thermal cameras. Features MAD-based detection algorithms, I2C multiplexer support, and real-time analysis of tyre temperature distribution.
 
