@@ -2,7 +2,7 @@
 Public interface for the thermal tyre driver package.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .driver import (
     SensorConfig,
