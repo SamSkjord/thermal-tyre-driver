@@ -2,6 +2,8 @@
 Public interface for the thermal tyre driver package.
 """
 
+__version__ = "0.1.0"
+
 from .driver import (
     SensorConfig,
     TyreThermalSensor,
@@ -20,4 +22,5 @@ __all__ = [
     "TyreSection",
     "DetectionInfo",
     "I2CMux",
+    "__version__",
 ]

@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thermal-tyre-driver"
+version = "0.1.0"
+description = "Thermal tyre analysis toolkit for MLX90640 sensors."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Sam Conway" }
+]
+keywords = ["tyre", "tire", "thermal", "racing", "sensors", "mlx90640"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Embedded Systems"
+]
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.10",
+    "adafruit-circuitpython-mlx90640>=1.2",
+    "adafruit-blinka>=8.34"
+]
+
+[project.urls]
+Homepage = "https://github.com/samskjord/thermal-tyre-driver"
+Issues = "https://github.com/samskjord/thermal-tyre-driver/issues"
+
+[tool.setuptools]
+packages = ["thermal_tyre_driver"]
+
+[tool.setuptools.package-data]
+thermal_tyre_driver = ["py.typed"]
