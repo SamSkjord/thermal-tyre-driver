@@ -1,0 +1,6 @@
+# Requirements for the Mac/host-side visualizer
+# Install with: pip install -r requirements_visualizer.txt
+
+pyserial>=3.5
+matplotlib>=3.5.0
+numpy>=1.20.0

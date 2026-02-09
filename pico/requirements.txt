@@ -1,0 +1,10 @@
+# CircuitPython Libraries Required
+# Download from: https://circuitpython.org/libraries
+#
+# Copy these to the lib/ folder on your CIRCUITPY drive:
+
+adafruit-circuitpython-mlx90640
+adafruit-circuitpython-bus-device
+
+# Note: ulab is built into most recent CircuitPython builds
+# If not available, you may need to use a custom build
